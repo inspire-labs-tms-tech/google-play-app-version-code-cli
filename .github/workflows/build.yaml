@@ -1,0 +1,64 @@
+name: Build
+on: push
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - run: sudo apt-get -y install binutils
+      - run: sudo apt-get -y install fakeroot
+
+      - name: create version number
+        run: echo "::set-env name=VERSION::v$(date +'%Y%m%d.%H%M%S')"
+
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: update version
+        run: sudo sed -i -e "s|v00000000.000000|$VERSION|g" ./src/main/java/com/inspiretmstech/CLI.java
+        env:
+          VERSION: ${{ env.VERSION }}
+
+      - name: setup java
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 17
+
+      - name: setup gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: compile jar
+        run: ./gradlew build
+
+      - name: compile distributable
+        run: |
+          jpackage \
+            --verbose \
+            --name google-app-version \
+            --main-jar main.jar \
+            -i ./main/build/libs \
+            --linux-package-name google-app-version
+          sudo mv *.deb google-app-version.deb
+
+      - name: upload artifact preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-main-build
+          path: ./google-app-version.deb
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: create version file
+        run: echo "$VERSION" > ./VERSION.txt
+        env:
+          VERSION: ${{ env.VERSION }}
+
+      - name: create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ env.VERSION }}
+          artifacts: "VERSION.txt,google-app-version.deb"
+          makeLatest: true
