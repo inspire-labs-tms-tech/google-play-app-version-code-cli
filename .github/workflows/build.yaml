@@ -39,8 +39,8 @@ jobs:
           jpackage \
             --verbose \
             --name google-app-version \
-            --main-jar main.jar \
-            -i ./main/build/libs \
+            --main-jar google-app-version.jar \
+            -i ./build/libs \
             --linux-package-name google-app-version
           sudo mv *.deb google-app-version.deb
 

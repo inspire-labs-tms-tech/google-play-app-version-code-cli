@@ -4,7 +4,6 @@ plugins {
 }
 
 group = 'com.inspiretmstech'
-version = '1'
 
 repositories {
     mavenCentral()
