@@ -5,7 +5,9 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.androidpublisher.AndroidPublisher;
 import com.google.api.services.androidpublisher.AndroidPublisherScopes;
-import com.google.api.services.androidpublisher.model.*;
+import com.google.api.services.androidpublisher.model.AppEdit;
+import com.google.api.services.androidpublisher.model.Bundle;
+import com.google.api.services.androidpublisher.model.BundlesListResponse;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.gson.JsonObject;
@@ -13,7 +15,6 @@ import com.google.gson.JsonParser;
 import picocli.CommandLine;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -25,21 +26,12 @@ import java.util.concurrent.Callable;
 )
 public class CLI implements Callable<Integer> {
 
-    enum VersionType {
-        LATEST,
-        NEXT
-    }
-
     @CommandLine.Parameters(index = "0", description = "the version number to output (${COMPLETION-CANDIDATES})")
     private VersionType versionType;
-
-
     @CommandLine.Option(names = {"-f", "--file"}, required = true, description = "a JSON file containing the service acount's credentials")
     private String file;
-
     @CommandLine.Option(names = {"-v", "--verbose"}, description = "print with verbose output")
     private boolean verbose;
-
     @CommandLine.Option(names = {"-p", "--package"}, description = "the package name of the app")
     private String packageName;
 
@@ -80,11 +72,11 @@ public class CLI implements Callable<Integer> {
         this.log("Existing Bundles: " + r.getBundles().size());
         for (Bundle bundle : r.getBundles()) {
             int bundleVersion = bundle.getVersionCode();
-            if(bundleVersion > version) version = bundleVersion;
+            if (bundleVersion > version) version = bundleVersion;
             this.log("Found Bundle Version: " + bundleVersion);
         }
 
-        if(version == 0) {
+        if (version == 0) {
             this.log("version number is zero");
             System.out.println("Unable to determine version number");
             return 1;
@@ -100,17 +92,22 @@ public class CLI implements Callable<Integer> {
 
         switch (this.versionType) {
             case LATEST:
-                if(this.verbose) this.log("Latest Bundle Version: " + currentVersion);
+                if (this.verbose) this.log("Latest Bundle Version: " + currentVersion);
                 else System.out.println(currentVersion);
                 return 0;
             case NEXT:
                 int nextBundleVersion = currentVersion + 1;
-                if(this.verbose) this.log("Next Bundle Version: " + nextBundleVersion);
+                if (this.verbose) this.log("Next Bundle Version: " + nextBundleVersion);
                 else System.out.println(nextBundleVersion);
                 return 0;
             default:
                 throw new Exception("Invalid version type '" + this.versionType + "'");
         }
+    }
+
+    enum VersionType {
+        LATEST,
+        NEXT
     }
 
 }
