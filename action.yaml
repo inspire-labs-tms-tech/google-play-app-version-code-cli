@@ -1,0 +1,30 @@
+name: "Setup Google App Version CLI Tool"
+description: "Setup the Google App Version CLI in a workflow job"
+inputs:
+  version:
+    description: "The version of the CLI to download"
+    default: "latest"
+runs:
+  using: composite
+  steps:
+    - name: download latest release
+      if: inputs.version == 'latest'
+      shell: bash
+      run: curl -LO https://github.com/inspire-labs-tms-tech/google-play-app-version-code-cli/releases/latest/download/google-app-version.deb
+
+    - name: download specific release
+      if: inputs.version != 'latest'
+      shell: bash
+      run: curl -LO "https://github.com/inspire-labs-tms-tech/google-play-app-version-code-cli/releases/download/$VERSION/google-app-version.deb"
+      env:
+        VERSION: ${{ inputs.version }}
+
+    - name: install release
+      shell: bash
+      run: sudo apt-get install ./google-app-version.deb
+
+    - name: add release to path
+      shell: bash
+      run: sudo ln -s /usr/local/bin/google-app-version/bin/google-app-version /usr/bin
+
+
