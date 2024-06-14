@@ -1,5 +1,8 @@
 name: "Setup Google App Version CLI Tool"
 description: "Setup the Google App Version CLI in a workflow job"
+branding:
+  color: blue
+  icon: terminal
 inputs:
   version:
     description: "The version of the CLI to download"
