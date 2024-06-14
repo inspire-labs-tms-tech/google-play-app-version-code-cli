@@ -16,6 +16,15 @@ jobs:
         uses: inspire-labs-tms-tech/google-play-app-version-code-cli@latest
         with:
           version: latest
+
+      - name: get next version code
+        id: version_code
+        run: echo "version_code=$(google-app-version next -f $JSON -p com.inspiretmstech.mobile)" >> $GITHUB_OUTPUT
+        env:
+          JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+
+      - name: use versionCode
+        run: echo ${{ steps.version_code.outputs.version_code }}
 ```
 
 ## Setup
