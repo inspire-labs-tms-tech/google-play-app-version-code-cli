@@ -42,6 +42,7 @@ jobs:
             --main-jar google-app-version.jar \
             -i ./build/libs \
             --linux-package-name google-app-version
+            --install-dir /usr/local/bin
           sudo mv *.deb google-app-version.deb
 
       - name: upload artifact preview
