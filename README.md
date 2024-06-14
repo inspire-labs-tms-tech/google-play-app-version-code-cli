@@ -15,16 +15,16 @@ jobs:
       - name: Setup Google App Version CLI Tool
         uses: inspire-labs-tms-tech/google-play-app-version-code-cli@latest
         with:
-          version: latest
-
+          version: latest # CLI version to use (defaults to `latest`
+  
       - name: get next version code
         id: version_code
-        run: echo "version_code=$(google-app-version next -f $JSON -p com.inspiretmstech.mobile)" >> $GITHUB_OUTPUT
+        run: NEXT="$(google-app-version -p com.inspiretmstech.mobile -f "$JSON" next)" && echo "version_code=$NEXT" >> $GITHUB_OUTPUT
         env:
-          JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }} # rename with your secret, where the secret-value is the copy-pasted output of your service account's credentials.json file
 
-      - name: use versionCode
-        run: echo ${{ steps.version_code.outputs.version_code }}
+      - name: use next versionCode
+        run: echo "next version code - ${{ steps.version_code.outputs.version_code }}"
 ```
 
 ## Setup
