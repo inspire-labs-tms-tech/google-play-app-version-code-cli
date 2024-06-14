@@ -2,6 +2,22 @@
 
 Retrieve the latest (or next) [versionCode](https://developer.android.com/studio/publish/versioning#versioningsettings) for a Google Play App. Useful for automating build scripts.
 
+## GitHub Action
+
+Using the CLI is incredibly simple, using the pre-compiled [GitHub Action](https://github.com/marketplace/actions/setup-google-app-version-cli-tool):
+
+```yaml
+
+jobs:
+  job:
+    # ...
+    steps:
+      - name: Setup Google App Version CLI Tool
+        uses: inspire-labs-tms-tech/google-play-app-version-code-cli@latest
+        with:
+          version: latest
+```
+
 ## Setup
 
 ### Service Account
